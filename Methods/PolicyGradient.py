@@ -4,6 +4,7 @@ from Methods.utils import Policy_gradient
 import torch
 import os
 from Games.Dots import *
+import matplotlib.pyplot as plt
 
 class model(nn.Module):
     def __init__(self, inputdim, hiddendim, outputdim, device):
@@ -34,12 +35,19 @@ hiddendim = 4
 outputdim = 4
 inputdim = 3
 n_episode = 10000   # epoch
-n_steps = 1000      # steps for 1 episode
-n_batch = 128       # batch size
+n_steps = 4096      # steps for 1 episode
+n_batch = 256       # batch size
+n_save = 10         # checkpoint episode
 lr = 1e-3
 UPDATE_STEP = 10    # update target policy
 DISCOUNT_FACTOR = 0.99
-epsilon = 0.1
+epsilon = 0.1       # epsilon-greedy
+n_selected = 5      # # of selective samples
+
+window = plt.figure()
+ax = window.add_subplot(1,1,1)
+plt.xlabel('episode')
+plt.ylabel('loss')
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -47,41 +55,31 @@ save_dir = "checkpoint"
 if not os.path.isdir(save_dir):
     os.mkdir(save_dir)
 
-# Behavior and target policy
+# Target policy
 policy = model(inputdim, hiddendim, outputdim, DEVICE).to(DEVICE)
-policy_target = model(inputdim, hiddendim, outputdim, DEVICE).to(DEVICE)
-
-optimizer = Policy_gradient(policy, inputSize, DISCOUNT_FACTOR, lr, device=DEVICE, policy2=policy_target)
-policy_target.load_state_dict(policy.state_dict())
-policy_target.eval()
+optimizer = Policy_gradient(policy, inputSize, DISCOUNT_FACTOR, lr, device=DEVICE, n_selected=n_selected, epsilon=epsilon)
 
 # Game environment
 environment = gameEnv(inputSize)
 prev_state = environment.state
 print("Let's get started !")
-global_loss = 0
 
 for episode in range(1, n_episode+1):
-    state_history = []
+    global_loss = []
     for n_iter in range(1, n_steps+1):
-        action = optimizer.select_action(prev_state, epsilon)
+        action = optimizer.select_action(prev_state)
         next_state, imd_reward, done = environment.step(action)
         policy.rewards.append(imd_reward)
-
-        # Update target policy
-        if n_iter % UPDATE_STEP == 0:
-            policy_target.load_state_dict(policy.state_dict())
 
         # Backward loss
         if n_iter % n_batch == 0:
             loss = optimizer.update_policy()
-            global_loss += loss
+            global_loss.append(loss)
 
         prev_state = next_state
 
     print(episode, ' is complete!')
+    print('episode: {ep} loss: {loss}'.format(ep=episode, loss=np.mean(global_loss)))
 
-    if episode % 10 == 0:
-        print('episode: {ep} loss: {loss}'.format(ep=episode, loss=global_loss))
-        torch.save(policy, os.path.join(save_dir, 'ck_{e}.pt'.format(e=episode//5)))
-        global_loss = 0
+    if episode % n_save == 0:
+        torch.save(policy, os.path.join(save_dir, 'ck_{e}.pt'.format(e=episode//n_save)))
