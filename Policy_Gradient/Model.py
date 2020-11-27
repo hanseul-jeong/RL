@@ -8,6 +8,7 @@ class model(nn.Module):
         self.inputdim = inputdim
         self.hiddendim = hiddendim
         self.outputdim = outputdim
+
         self.l1 = nn.Conv2d(self.inputdim, 8, 3, stride=2)
         self.b1 = nn.BatchNorm2d(8)
         self.l2 = nn.Conv2d(8, 16, 3, stride=2)
@@ -24,4 +25,5 @@ class model(nn.Module):
         z = self.b2(z)
         z = z.view(-1, 16*3*3)
         z = torch.softmax(self.fc1(z), dim=-1)
+
         return z
