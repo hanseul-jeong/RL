@@ -32,6 +32,8 @@ class gameEnv():
         self.sizeX = size
         self.sizeY = size
         self.actions = 4
+        self.GOOD = 5
+        self.BAD = -2
         self.objects = []
         self.partial = partial
         a = self.reset()
@@ -40,17 +42,17 @@ class gameEnv():
         self.objects = []
         hero = gameOb(self.newPosition(), 1, 1, 2, None, 'hero')
         self.objects.append(hero)
-        bug = gameOb(self.newPosition(), 1, 1, 1, 1, 'goal')
+        bug = gameOb(self.newPosition(), 1, 1, 1, self.GOOD, 'goal')
         self.objects.append(bug)
-        hole = gameOb(self.newPosition(), 1, 1, 0, -1, 'fire')
+        hole = gameOb(self.newPosition(), 1, 1, 0, self.BAD, 'fire')
         self.objects.append(hole)
-        bug2 = gameOb(self.newPosition(), 1, 1, 1, 1, 'goal')
+        bug2 = gameOb(self.newPosition(), 1, 1, 1, self.GOOD, 'goal')
         self.objects.append(bug2)
-        hole2 = gameOb(self.newPosition(), 1, 1, 0, -1, 'fire')
+        hole2 = gameOb(self.newPosition(), 1, 1, 0, self.BAD, 'fire')
         self.objects.append(hole2)
-        bug3 = gameOb(self.newPosition(), 1, 1, 1, 1, 'goal')
+        bug3 = gameOb(self.newPosition(), 1, 1, 1, self.GOOD, 'goal')
         self.objects.append(bug3)
-        bug4 = gameOb(self.newPosition(), 1, 1, 1, 1, 'goal')
+        bug4 = gameOb(self.newPosition(), 1, 1, 1, self.GOOD, 'goal')
         self.objects.append(bug4)
         state = self.renderEnv()
         self.state = state
@@ -61,7 +63,7 @@ class gameEnv():
         hero = self.objects[0]
         heroX = hero.x
         heroY = hero.y
-        penalize = 0.
+        penalize = -0.5
         if direction == 0 and hero.y >= 1:
             hero.y -= 1
         if direction == 1 and hero.y <= self.sizeY - 2:
@@ -71,7 +73,7 @@ class gameEnv():
         if direction == 3 and hero.x <= self.sizeX - 2:
             hero.x += 1
         if hero.x == heroX and hero.y == heroY:
-            penalize = 0.0
+            penalize = -1.0
         self.objects[0] = hero
         return penalize
 
@@ -100,10 +102,10 @@ class gameEnv():
         for other in others:
             if hero.x == other.x and hero.y == other.y:
                 self.objects.remove(other)
-                if other.reward == 1:
-                    self.objects.append(gameOb(self.newPosition(), 1, 1, 1, 1, 'goal'))
+                if other.reward == self.GOOD:
+                    self.objects.append(gameOb(self.newPosition(), 1, 1, 1, self.GOOD, 'goal'))
                 else:
-                    self.objects.append(gameOb(self.newPosition(), 1, 1, 0, -1, 'fire'))
+                    self.objects.append(gameOb(self.newPosition(), 1, 1, 0, self.BAD, 'fire'))
                 return other.reward, False
         if ended == False:
             return 0.0, False
