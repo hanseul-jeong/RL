@@ -1,14 +1,14 @@
-import numpy as np
 from skimage.transform import resize
-import random
+import numpy as np
 import itertools
-import scipy.misc
-import matplotlib.pyplot as plt
 
 '''
     I cloned open-source and modified a little
     Plz refer original version below site !!
-    https://github.com/awjuliani/DeepRL-Agents/blob/master/gridworld.py 
+    https://github.com/awjuliani/DeepRL-Agents/blob/master/gridworld.py
+    
+    written by hanseul-jeong
+    https://github.com/hanseul-jeong/RL
 '''
 
 class gameOb():

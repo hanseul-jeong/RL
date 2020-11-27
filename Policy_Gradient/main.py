@@ -1,9 +1,15 @@
-from Policy_Gradient.Policy_gradient import Policy_gradient
-from Policy_Gradient.Model import model
+from Policy_Gradient.policy_gradient import Policy_gradient
+from Policy_Gradient.model import model
 import torch
 import os
 from Games.Dots import *
 import matplotlib.pyplot as plt
+'''
+    Vanila Policy Gradient method
+    
+    written by hanseul-jeong
+    https://github.com/hanseul-jeong/RL
+'''
 
 inputSize = 14
 hiddendim = 4
