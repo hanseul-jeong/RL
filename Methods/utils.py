@@ -6,14 +6,14 @@ import random
 n_RGB = 3
 
 class Policy_gradient():
-    def __init__(self, policy, input_size, discount_factor, lr=1e-3, optimizer='Adam', device='cuda', policy2=None):
+    def __init__(self, policy, input_size, discount_factor, lr=1e-3, n_acts=4, optimizer='Adam', device='cuda', policy2=None):
         self.policy = policy
         if policy2 is not None:
             self.policy_target = policy2
         self.input_size = input_size
         self.discount_factor = discount_factor
         self.device = device
-        self.n_acts = 4
+        self.n_acts = n_acts
         if optimizer == 'Adam':
             self.optimizer = optim.Adam(self.policy.parameters(), lr=lr)
 
