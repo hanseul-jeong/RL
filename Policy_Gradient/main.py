@@ -3,7 +3,6 @@ from Policy_Gradient.model import model
 import torch
 import os
 from Games.Dots import *
-import matplotlib.pyplot as plt
 '''
     Vanila Policy Gradient method
     
@@ -24,11 +23,6 @@ UPDATE_STEP = 10    # update target policy
 DISCOUNT_FACTOR = 0.99
 epsilon = 0.1       # epsilon-greedy
 n_selected = 5      # # of selective samples
-
-window = plt.figure()
-ax = window.add_subplot(1,1,1)
-plt.xlabel('episode')
-plt.ylabel('loss')
 
 DEVICE = 'cuda' if torch.cuda.is_available() else 'cpu'
 
