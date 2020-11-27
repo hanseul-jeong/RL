@@ -1,8 +1,8 @@
 from Policy_Gradient.policy_gradient import Policy_gradient
 from Policy_Gradient.model import model
-import torch
-import os
 from Games.Dots import *
+import torch, os
+
 '''
     Vanila Policy Gradient method
     
