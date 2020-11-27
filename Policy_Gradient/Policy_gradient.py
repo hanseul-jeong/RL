@@ -15,8 +15,11 @@ class Policy_gradient():
         self.n_acts = n_acts    # # of actions
         self.n_selected = n_selected
         self.epsilon = epsilon
+
         if optimizer == 'Adam':
             self.optimizer = optim.Adam(self.policy.parameters(), lr=lr)
+        elif optimizer == 'SGD':
+            self.optimizer = optim.SGD(self.policy.parameters(), lr=lr)
 
     def select_action(self, prev_state):
         X = torch.FloatTensor(prev_state).to(self.device).view(1, n_RGB, self.input_size + 2, self.input_size + 2)
