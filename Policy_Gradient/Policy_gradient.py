@@ -73,3 +73,4 @@ class Policy_gradient():
         self.policy.policy_history = Variable(torch.Tensor()).to(self.device)
         self.policy.rewards = []
         return loss
+
