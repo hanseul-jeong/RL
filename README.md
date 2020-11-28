@@ -15,7 +15,7 @@ Based on this game, the agent learned by basic **policy gradient method**.
 
 # Agent Behaviors
 
-<p flaot="left">
+<p align='center'>
 <img src="/agent1.gif" width="200"    />
 <img src="/agent2.gif" width="200"    />
 <img src="/agent3.gif" width="200"   />
