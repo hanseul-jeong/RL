@@ -2,9 +2,8 @@
 
 This projects apply basic RL concepts to various games.
 ### **1) GridWorld**  
-<p align='center'>
 ![img GridWorld](/GridWorld.png)
-<p/>  
+
   
 the original code of game is below
 https://github.com/awjuliani/DeepRL-Agents/blob/master/gridworld.py
@@ -14,8 +13,7 @@ Based on this game, the agent learned by vanila policy gradient and deep q learn
 
 ### Rewards graph
 
-<p align='center'>
-![img PG_reward_graph](/PG_reward_graph.png) <p/>  
+![img PG_reward_graph](/PG_reward_graph.png) 
 
 ### Agent Behaviors
 
