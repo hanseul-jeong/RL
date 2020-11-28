@@ -22,10 +22,14 @@ class DQN():
         else:
             print("Plz select optimizer in 'Adam' or 'SGD'")
 
-    def select_action(self, prev_state):
+    def select_action(self, prev_state, epsilon):
         X = torch.FloatTensor(prev_state).to(self.device).view(1, n_RGB, self.input_size + 2, self.input_size + 2)
         Qs = self.policy(X)
-        action = torch.argmax(Qs)
+        p = random.random()
+        if p < epsilon:
+            action = random.randint(0,4)
+        else:
+            action = torch.argmax(Qs)
         if self.policy.policy_history.size(0) == 0:
             self.policy.policy_history = Qs[:,action]
         else:

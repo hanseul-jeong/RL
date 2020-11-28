@@ -1,5 +1,5 @@
-from DQN.DQN import DQN
-from DQN.model import model
+from dqn.DQN import DQN
+from dqn.model import model
 from Games.Dots import *
 import torch, os
 import matplotlib.pyplot as plt
@@ -16,10 +16,10 @@ hiddendim = 4
 outputdim = 4
 inputdim = 3
 n_episode = 10000  # epoch
-n_steps = 64  # steps for 1 episode
+n_steps = 1024  # steps for 1 episode
 lr = 1e-3
 DISCOUNT_FACTOR = 0.99
-epsilon = 0.1   # epsilon-greedy
+epsilon = 0.1   # epsilon-greedy (-1 : Only greedy)
 gpu_number = 0  # in case of multi-gpu, choose gpu (e.g., 0, 1, 2)
 SAVE = False
 n_save = 100  # checkpoint episode
@@ -49,7 +49,7 @@ for episode in range(1, n_episode + 1):
     prev_state = environment.state
 
     for n_iter in range(1, n_steps + 1):
-        action = optimizer.select_action(prev_state)
+        action = optimizer.select_action(prev_state, epsilon)
         next_state, imd_reward, done = environment.step(action)
         policy.rewards.append(imd_reward)
         max_r = -100
