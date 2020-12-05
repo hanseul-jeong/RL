@@ -33,7 +33,7 @@ class gameEnv():
         self.sizeY = size
         self.actions = 4
         self.GOOD = 5
-        self.BAD = -2
+        self.BAD = -5
         self.objects = []
         self.partial = partial
         a = self.reset()
@@ -61,20 +61,25 @@ class gameEnv():
     def moveChar(self, direction):
         # 0 - up, 1 - down, 2 - left, 3 - right
         hero = self.objects[0]
-        heroX = hero.x
-        heroY = hero.y
+        d_x = 0
+        d_y = 0
         penalize = -0.5
-        if direction == 0 and hero.y >= 1:
-            hero.y -= 1
-        if direction == 1 and hero.y <= self.sizeY - 2:
-            hero.y += 1
-        if direction == 2 and hero.x >= 1:
-            hero.x -= 1
-        if direction == 3 and hero.x <= self.sizeX - 2:
-            hero.x += 1
-        if hero.x == heroX and hero.y == heroY:
+        if direction == 0:
+            d_y -= 1
+        if direction == 1:
+            d_y += 1
+        if direction == 2:
+            d_x -= 1
+        if direction == 3:
+            d_x += 1
+
+        if hero.x + d_x in [-1, self.sizeX] or hero.y + d_y in [-1, self.sizeY]:
             penalize = -1.0
-        self.objects[0] = hero
+            d_x = 0
+            d_y = 0
+
+        self.objects[0].x += d_x
+        self.objects[0].y += d_y
         return penalize
 
     def newPosition(self):
@@ -136,6 +141,22 @@ class gameEnv():
             print(done)
             print(reward)
             print(penalty)
-            return state, (reward + penalty), done
+            return state, (reward + penalty), done, None
         else:
-            return state, (reward + penalty), done
+            return state, (reward + penalty), done, None
+
+    def find_optimal_action(self):
+        assert self.objects[0].name == 'hero'
+        current_pos = (self.objects[0].x, self.objects[0].y)
+        others = self.objects[1:]
+        actions = [(0,-1),(0,+1),(-1,0),(+1,0)]
+        rewards = []
+        for action in actions:
+            rewards.append(0)
+            cand = tuple(min(max(c+a, 0),self.sizeX-1) for c, a in zip(current_pos,action))
+            for other in others:
+                if (other.x, other.y) == cand:
+                    rewards[-1] += other.reward
+                    break
+        max_action = np.argmax(rewards)
+        return max_action, rewards[max_action]
