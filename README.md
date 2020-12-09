@@ -32,6 +32,35 @@ Based on this game, the agent learned by vanila policy gradient and deep q learn
 <img src="/img/agent3.gif" width="250"   />
 <p/>
 
-> ## **Deep Q Learning (DQN)**
+- ### **CartPole**  
 
-Coming Soon!
+<p align='center'>
+<img src="/img/CartPole.png" width="400"    />
+<p/>
+
+You can easily apply this game using gym library
+
+    pip install gym
+
+> ## **policy gradient method**
+### Agent Behaviors
+
+- #### Ver.1 1000 episode
+<p align='center'>
+<img src="/img/cartpole_1000.gif" width="250"    />
+<img src="/img/cartpole_1000_v2.gif" width="250"    />
+<p/>
+
+
+- #### Ver.2 2000 episode
+<p align='center'>
+<img src="/img/cartpole_2000.gif" width="250"    />
+<img src="/img/cartpole_2000_v2.gif" width="250"    />
+<p/>
+
+
+- #### Ver.1 4000 episode
+<p align='center'>
+<img src="/img/cartpole_4000.gif" width="250"    />
+<img src="/img/cartpole_4000_v2.gif" width="250"    />
+<p/>
