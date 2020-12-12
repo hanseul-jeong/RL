@@ -112,13 +112,13 @@ Continuous version : States and actions are given with **8 float values** and **
 ## Ver.1 Discrete Actions  
 
 <p align='center'>
-<img src="/img/lunar_seed_10_3.gif" width="350"    />
+<img src="/img/lunar_discrete.gif" width="350"    />
 <p/>
     
 ## Ver.2 Continuous Actions  
 
 <p align='center'>
-<img src="/img/lunarcont_0_4.gif" width="350"    />
+<img src="/img/lunarcont.gif" width="350"    />
 <p/>
 
 
