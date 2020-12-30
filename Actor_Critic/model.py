@@ -9,9 +9,7 @@ class Dots_model(nn.Module):
         self.outputdim = n_actions
 
         self.l1 = nn.Conv2d(self.inputdim, 100, 3, stride=1)
-        # self.b1 = nn.BatchNorm2d(32)
         self.l2 = nn.Conv2d(100, 100, 3, stride=1)
-        # self.b2 = nn.BatchNorm2d(64)
         self.fc1 = nn.Linear(100*3*3, 100)
         self.fc2 = nn.Linear(100, self.outputdim) # V(s), A(s,a)
 
@@ -45,7 +43,7 @@ class Cart_model(nn.Module):
         z = torch.relu(self.fc1(x))
         z = torch.relu(self.fc2(z))
         z = torch.relu(self.fc3(z))
-        z = torch.softmax(self.fc4(z), dim=-1)
+        z = self.fc4(z)
 
         return z
 

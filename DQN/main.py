@@ -1,7 +1,12 @@
 from DQN.dqn import DQN
 import torch.optim as optim
 import torch, os
+import matplotlib.pyplot as plt
 
+window = plt.figure()
+ax = window.add_subplot(1,1,1)
+plt.xlabel('episode', fontsize=17)
+plt.ylabel('Average rewards', fontsize=17)
 '''
     Vanila Deep Q network method (w/o replay buffer and epsilon-greedy)
 
@@ -17,12 +22,12 @@ elif game in ['CartPole', 'Cartpole', 'cartpole', 'cart', 'Cart', 'Pole', 'pole'
 
 n_episode = 10000  # epoch
 n_steps = 256  # steps for 1 episode
-n_updates = 64
+n_updates = 128
 
 lr = 1e-4
 DISCOUNT_FACTOR = 0.99
 epsilon = 0.9   # epsilon-greedy (-1 : Only greedy)
-gpu_number = 0  # in case of multi-gpu, choose gpu (e.g., 0, 1, 2)
+gpu_number = 1  # in case of multi-gpu, choose gpu (e.g., 0, 1, 2)
 SAVE = True
 n_save = 1000  # checkpoint episode
 
@@ -75,6 +80,10 @@ for episode in range(1, n_episode + 1):
 
     print(episode, ' is complete!')
     print('episode: {ep} epsilon {eps:.4f} reward: {reward}'.format(ep=episode, eps=epsilon, reward=global_reward[-1]))
+
+    ax.plot(global_reward, color='gray', linewidth=0.5)
+    plt.pause(0.0000001)
+    ax.lines.pop()
 
     if SAVE and (episode % n_save == 0):
         torch.save(policy_t, os.path.join(save_dir, 'ck_dqn_dots_{e}.pt'.format(e=episode // n_save)))

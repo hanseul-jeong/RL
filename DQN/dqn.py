@@ -46,7 +46,7 @@ class DQN():
 
         p = random.random()
         if p < epsilon:
-            action = random.randint(0,1)
+            action = random.randint(0,self.n_acts-1)
         else:
             action = torch.argmax(Qs).item()
 
@@ -61,10 +61,6 @@ class DQN():
 
     # Calculate loss and backward
     def get_loss(self, policy_b, policy_t):
-        Y = []
-        n_samples = len(policy_b.rewards)
-        R = 0
-
         # Return of next state
         optim_R = torch.cat([policy_t.policy_history[1:], torch.zeros(1).to(self.device)], dim=-1)
 
@@ -74,8 +70,8 @@ class DQN():
         # Normalization
         Y = (Y - Y.mean()) / (Y.std() + 1e-12)
 
-        loss = F.smooth_l1_loss(policy_b.policy_history, Y)
-        # loss = torch.sum((policy_b.policy_history - Y) ** 2)
+        # loss = F.smooth_l1_loss(policy_b.policy_history, Y)
+        loss = torch.sum((policy_b.policy_history - Y) ** 2)
         return loss, Y.sum()
 
     # Backward loss and renewal previous policies and rewards

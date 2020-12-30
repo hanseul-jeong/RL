@@ -60,6 +60,7 @@ class gameEnv():
 
     def moveChar(self, direction):
         # 0 - up, 1 - down, 2 - left, 3 - right
+        done = False
         hero = self.objects[0]
         d_x = 0
         d_y = 0
@@ -74,7 +75,7 @@ class gameEnv():
             d_x += 1
 
         if hero.x + d_x in [-1, self.sizeX] or hero.y + d_y in [-1, self.sizeY]:
-            penalize = -1.0
+            penalize = self.BAD
             d_x = 0
             d_y = 0
 

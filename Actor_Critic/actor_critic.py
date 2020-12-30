@@ -6,8 +6,9 @@ import random, math
 
 n_RGB = 3
 
-class Policy_gradient():
-    def __init__(self, game, discount_factor=0.99, device='cuda',pixel=None):
+class Actor_Critic():
+    def __init__(self, game, adv, discount_factor=0.99, device='cuda',pixel=None):
+        self.adv = adv
         if game in ['Dots','dots','dot']:
             self.game = 'Dots'
             if pixel is None:
@@ -60,18 +61,19 @@ class Policy_gradient():
             init_state = env.reset()
         return env, init_state
 
-    def select_action(self, policy, prev_state, epsilon):
+    def select_action(self, actor, critic, prev_state, epsilon):
         X = torch.from_numpy(prev_state).float().to(self.device)
         X = X.view(self.input_shape)
 
         p = random.random()
         if p <= epsilon:
-            if self.game != 'LunarCont':
+            if self.game != 'LumarCont':
+                # uniform dist
                 A = Variable(torch.FloatTensor([[1 / self.n_acts]*self.n_acts]), requires_grad=True).to(self.device)
             else:
-                A = torch.FloatTensor([[0.0] * self.n_acts], requires_grad=True).to(self.device)
+                A = Variable(torch.FloatTensor([[0.0] * self.n_acts]), requires_grad=True).to(self.device)
         else:
-            A = policy(X)
+            A = torch.softmax(actor(X), dim=-1)
         if self.game == 'LunarCont':
             var = torch.ones_like(A)
             action = torch.normal(A, var)
@@ -81,41 +83,58 @@ class Policy_gradient():
             action = action_dist.sample()
             logprob = action_dist.log_prob(action)
 
-        if policy.policy_history.size(0) == 0:
-            policy.policy_history = logprob
+        if actor.policy_history.size(0) == 0:
+            actor.policy_history = logprob
         else:
-            policy.policy_history = torch.cat([policy.policy_history, logprob], dim=-1)
+            actor.policy_history = torch.cat([actor.policy_history, logprob], dim=-1)
 
         if 'cuda' in self.device:
-            action = action.detach().cpu().view(-1)
-        if self.game == 'LunarCont':
-            return action.numpy()
+            action = action.detach().cpu()
+
+        if self.game != 'Lunarcont':
+            pred_q = critic(X)
+            action = action.item()
         else:
-            return action.item()
+            pred_q = critic(X)
+            action = action.view(-1).numpy()
+        if not self.adv:
+            pred_q = pred_q[:, action]
+
+        return action, pred_q.view(-1)  # remove batch dim
 
     # Calculate loss and backward
-    def get_loss(self, policy):
+    def get_loss(self, actor, critic):
         reward_lists = []
-        n_samples = len(policy.rewards)
+        n_samples = len(actor.rewards)
         R = 0
 
         # Discounted reward
-        for r in policy.rewards[::-1]:
+        for r in actor.rewards[::-1]:
             R = r + self.discount_factor * R
             reward_lists.insert(0, R)
 
         reward_list = torch.FloatTensor(reward_lists).to(self.device)
 
         # Normalization
-        reward_list = torch.where(reward_list.std() !=0,
+        Q = torch.where(reward_list.std() !=0,
                                   (reward_list - reward_list.mean())/reward_list.std(),
                                   torch.zeros_like(reward_list))
-        if self.game == 'LunarCont':
-            loss = -torch.sum(policy.policy_history * reward_list) / self.n_acts
-        else:
-            loss = -torch.sum(policy.policy_history * reward_list)
+        ######################################################### Check Lunar pred q ###########################################
+        pred_q = torch.cat(critic.rewards, dim=-1)
 
-        return loss
+        if self.adv:
+            Q_ = (Q - pred_q).detach()
+        else:
+            Q_ = Q
+
+        if self.game == 'LunarCont':
+            loss_actor = -torch.sum(actor.policy_history * Q_)
+            loss_critic = torch.sum((pred_q - Q)**2)
+        else:
+            loss_actor = -torch.sum(actor.policy_history * Q_) / n_samples
+            loss_critic = torch.sum((pred_q - Q) ** 2)
+
+        return loss_actor, loss_critic
 
     # Backward loss and renewal previous policies and rewards
     def reset_policy(self, policy):

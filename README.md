@@ -26,7 +26,7 @@ the way of installation is below
 3) LunarLander
 4) Baseball game (Coming Soon)
 
-In case of gym games, the goal of each game is [here](https://github.com/openai/gym/wiki/Leaderboard, "learder board")
+In case of OpenAI games, the goal of the each game is [here](https://github.com/openai/gym/wiki/Leaderboard, "learder board") and you can find more OpenAI games [here](https://gym.openai.com/envs/#classic_control, "OpenAI")
 
 - ### **1) Dots**  
 
@@ -128,3 +128,12 @@ Continuous version : States and actions are given with **8 float values** and **
 Based on this game, the agent learned by vanila policy gradient and deep q learning.
 
 - ### **2) Q learning**
+Basic Q learning (without memory buffer)
+
+- ### **3) A2C**
+Actor-Critic with Advantage function
+
+- ### **4) SAC**
+Soft Actor-Critic
+
+
